@@ -291,9 +291,10 @@ class Webnovel implements Plugin.PluginBase {
               name: locked ? `${chapterName} 🔒` : chapterName,
               path: chapterPath,
               // Absolute only: relative dates would change on every refresh
-              releaseTime: publishTime
-                ? new Date(publishTime).toISOString()
-                : undefined,
+              releaseTime:
+                publishTime && !isNaN(new Date(publishTime).getTime())
+                  ? new Date(publishTime).toISOString()
+                  : undefined,
             });
           }
         });
@@ -384,7 +385,7 @@ class Webnovel implements Plugin.PluginBase {
     );
     add(
       'Updated',
-      book.updateTime
+      book.updateTime && !isNaN(new Date(book.updateTime).getTime())
         ? new Date(book.updateTime).toISOString().slice(0, 10)
         : undefined,
     );
