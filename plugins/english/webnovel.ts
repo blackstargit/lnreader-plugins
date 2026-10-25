@@ -255,14 +255,22 @@ class Webnovel implements Plugin.PluginBase {
     const chapters: Plugin.ChapterItem[] = [];
 
     loadedCheerio('.volume-item').each((i_v_, ele_v) => {
-      // Keep the 1.0.3 "Volume N" prefix: changing chapter names would mark
-      // every stored chapter as updated in the app.
-      const volumeMatch = loadedCheerio(ele_v)
+      // "Volume 0 : Auxiliary Volume" or "Volume 1"
+      const heading = loadedCheerio(ele_v)
+        .find('h4')
         .first()
         .text()
-        .match(/Volume\s(\d+)/);
+        .replace(/\s+/g, ' ')
+        .trim();
+      const volumeMatch =
+        heading.match(/^Volume\s*(\d+)\s*(?::\s*(.+))?$/) ||
+        loadedCheerio(ele_v)
+          .first()
+          .text()
+          .match(/Volume\s(\d+)/);
       const volumeName = volumeMatch
-        ? `Volume ${volumeMatch[1]}`
+        ? `Volume ${volumeMatch[1]}` +
+          (volumeMatch[2]?.trim() ? `: ${volumeMatch[2].trim()}` : '')
         : 'Unknown Volume';
 
       loadedCheerio(ele_v)
